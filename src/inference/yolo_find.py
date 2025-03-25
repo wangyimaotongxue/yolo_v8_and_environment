@@ -16,10 +16,6 @@ class YOLODetector:
         results = self.model.predict(source=frame, show=False)
         return results[0].plot()  # 返回带有检测框的帧
 
-        # 如果检测到目标，开始录制
-        if len(detections) > 0 and not saver.is_recording:
-            saver.start_recording("output.mp4")
-
 def main():
     model_path = "/home/cc/Documents/yolov8_project/src/runs/detect/train/weights/best.pt"
     detector = YOLODetector(model_path)

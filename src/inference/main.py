@@ -11,7 +11,7 @@ def main():
 
     camera = Camera(4)
     detector = YOLODetector(model_path)
-    video_saver = VideoSaver("output.avi", fps=20.0, frame_size=(640, 480))
+    video_saver = VideoSaver("output.avi", fps=30.0, frame_size=(640, 480))
 
     # 开始时间，用于计算FPS
     start_time = time.time()

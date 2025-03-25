@@ -5,10 +5,10 @@ import albumentations as A
 from tqdm import tqdm
 
 # 数据路径
-IMAGE_DIR = "/home/stick/yolov8_project/src/dataset_test/images/train"  # 原始图片路径
-LABEL_DIR = "/home/stick/yolov8_project/src/dataset_test/labels/train"  # YOLO 标签路径
-OUTPUT_IMAGE_DIR = "/home/stick/yolov8_project/src/dataset_test/images/train_add"  # 增强后的图片路径
-OUTPUT_LABEL_DIR = "/home/stick/yolov8_project/src/dataset_test/labels/train_add"  # 增强后的标签路径
+IMAGE_DIR = "/home/cc/Documents/yolov8_project/src/dataset_test/images/train"  # 原始图片路径
+LABEL_DIR = "/home/cc/Documents/yolov8_project/src/dataset_test/labels/train"  # YOLO 标签路径
+OUTPUT_IMAGE_DIR = "/home/cc/Documents/yolov8_project/src/dataset_test/images/train_add"  # 增强后的图片路径
+OUTPUT_LABEL_DIR = "/home/cc/Documents/yolov8_project/src/dataset_test/labels/train_add"  # 增强后的标签路径
 
 # 确保输出文件夹存在
 os.makedirs(OUTPUT_IMAGE_DIR, exist_ok=True)
@@ -21,7 +21,7 @@ transform = A.Compose([
     A.Rotate(limit=20, p=0.5),
     A.GaussianBlur(blur_limit=(3, 7), p=0.2),
     A.CLAHE(clip_limit=2, tile_grid_size=(8, 8), p=0.2),
-    A.RandomSizedCrop(min_max_height=(320, 640), size=(640, 640), p=0.3),
+    A.RandomSizedCrop(min_max_height=(320, 640), size=(640, 720), p=0.3),
 ], bbox_params=A.BboxParams(format='yolo', label_fields=['category']))
 
 # 获取所有图片文件
@@ -47,10 +47,11 @@ for img_file in tqdm(image_files, desc="Augmenting Images"):
             category = int(parts[0])
             x_center, y_center, bbox_w, bbox_h = map(float, parts[1:])
             # 反归一化，转为绝对坐标（增强时使用绝对坐标）
-            x_center *= w
-            y_center *= h
-            bbox_w *= w
-            bbox_h *= h
+            # x_center *= w
+            # y_center *= h
+            # bbox_w *= w
+            # bbox_h *= h
+
             boxes.append([x_center, y_center, bbox_w, bbox_h])
             categories.append(category)
     else:
@@ -64,6 +65,19 @@ for img_file in tqdm(image_files, desc="Augmenting Images"):
         aug_boxes = augmented['bboxes']
         aug_categories = augmented['category']
 
+        # 过滤掉超出范围的 bbox（albumentations 可能会产生超出 0~1 的框）
+        valid_boxes = []
+        valid_categories = []
+        for bbox, category in zip(aug_boxes, aug_categories):
+            x_center, y_center, bbox_w, bbox_h = bbox
+            if 0 <= x_center <= 1 and 0 <= y_center <= 1 and 0 <= bbox_w <= 1 and 0 <= bbox_h <= 1:
+                valid_boxes.append(bbox)
+                valid_categories.append(category)
+
+        # 跳过没有有效目标的增强图片
+        if len(valid_boxes) == 0:
+            continue
+
         # 保存增强后的图片
         aug_img_filename = f"aug_{i}_{img_file}"
         aug_img_path = os.path.join(OUTPUT_IMAGE_DIR, aug_img_filename)
@@ -75,11 +89,11 @@ for img_file in tqdm(image_files, desc="Augmenting Images"):
         with open(aug_label_path, 'w') as f:
             for category, bbox in zip(aug_categories, aug_boxes):
                 # 将增强后的绝对坐标转换回归一化坐标
-                x_center, y_center, bbox_w, bbox_h = bbox
-                x_center /= w
-                y_center /= h
-                bbox_w /= w
-                bbox_h /= h
+                # x_center, y_center, bbox_w, bbox_h = bbox
+                # x_center /= w
+                # y_center /= h
+                # bbox_w /= w
+                # bbox_h /= h
                 # 保存到标签文件
                 f.write(f"{category} {x_center} {y_center} {bbox_w} {bbox_h}\n")
 
