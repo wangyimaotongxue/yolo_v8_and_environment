@@ -1,6 +1,0 @@
-gibbon
-langur
-macaque
-marmoset
-rhinopithecu
-tarsier

@@ -1,8 +1,8 @@
 task: detect
 mode: train
 model: yolov8n.pt
-data: /home/stick/yolov8_project/src/data.yaml
-epochs: 100
+data: /home/stick/yolo_v8_and_environment/src/data.yaml
+epochs: 1000
 time: null
 patience: 100
 batch: 32

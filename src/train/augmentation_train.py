@@ -5,10 +5,10 @@ import albumentations as A
 from tqdm import tqdm
 
 # 数据路径
-IMAGE_DIR = "/home/cc/Documents/yolov8_project/src/dataset_test/images/train"  # 原始图片路径
-LABEL_DIR = "/home/cc/Documents/yolov8_project/src/dataset_test/labels/train"  # YOLO 标签路径
-OUTPUT_IMAGE_DIR = "/home/cc/Documents/yolov8_project/src/dataset_test/images/train_add"  # 增强后的图片路径
-OUTPUT_LABEL_DIR = "/home/cc/Documents/yolov8_project/src/dataset_test/labels/train_add"  # 增强后的标签路径
+IMAGE_DIR = "/home/stick/yolo_v8_and_environment/src/dataset/images/train"  # 原始图片路径
+LABEL_DIR = "/home/stick/yolo_v8_and_environment/src/dataset_test/labels/train"  # YOLO 标签路径
+OUTPUT_IMAGE_DIR = "/home/stick/yolo_v8_and_environment/src/dataset_test/images/en_train"  # 增强后的图片路径
+OUTPUT_LABEL_DIR = "/home/stick/yolo_v8_and_environment/src/dataset_test/labels/en_train"  # 增强后的标签路径
 
 # 确保输出文件夹存在
 os.makedirs(OUTPUT_IMAGE_DIR, exist_ok=True)

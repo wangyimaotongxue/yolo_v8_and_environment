@@ -5,10 +5,10 @@ import albumentations as A
 from tqdm import tqdm
 
 # 数据路径
-IMAGE_DIR = "./images"  # 原始图片
-LABEL_DIR = "./labels"  # YOLO 标签
-OUTPUT_IMAGE_DIR = "./augmented_images"  # 增强后的图片
-OUTPUT_LABEL_DIR = "./augmented_labels"  # 增强后的标签
+IMAGE_DIR = "/home/stick/yolo_v8_and_environment/src/dataset/images/val"  # 原始图片
+LABEL_DIR = "/home/stick/yolo_v8_and_environment/src/dataset/labels/val"  # YOLO 标签
+OUTPUT_IMAGE_DIR = "/home/stick/yolo_v8_and_environment/src/dataset/images/en_val"  # 增强后的图片
+OUTPUT_LABEL_DIR = "/home/stick/yolo_v8_and_environment/src/dataset/labels/en_val"  # 增强后的标签
 
 # 确保输出文件夹存在
 os.makedirs(OUTPUT_IMAGE_DIR, exist_ok=True)
@@ -21,8 +21,17 @@ transform = A.Compose([
     A.Rotate(limit=20, p=0.5),
     A.GaussianBlur(blur_limit=(3, 7), p=0.2),
     A.CLAHE(clip_limit=2, tile_grid_size=(8, 8), p=0.2),
-    A.RandomSizedCrop(min_max_height=(320, 640), height=640, width=640, p=0.3),
+    A.RandomSizedCrop(min_max_height=(320, 640), size=(640, 720), p=0.3),
 ], bbox_params=A.BboxParams(format='yolo', label_fields=['category']))
+
+# transform = A.Compose([
+#     A.HorizontalFlip(p=0.5),
+#     A.RandomBrightnessContrast(p=0.2),
+#     A.Rotate(limit=20, p=0.5),
+#     A.GaussianBlur(blur_limit=(3, 7), p=0.2),
+#     A.CLAHE(clip_limit=2, tile_grid_size=(8, 8), p=0.2),
+#     A.RandomSizedCrop(min_max_height=(320, 640), size=(640, 720), p=0.3),
+# ], bbox_params=A.BboxParams(format='yolo', label_fields=['category']))
 
 # 读取所有图片文件
 image_files = [f for f in os.listdir(IMAGE_DIR) if f.endswith(('.jpg', '.png', '.jpeg'))]
@@ -58,6 +67,19 @@ for img_file in tqdm(image_files, desc="Augmenting Images"):
         aug_image = augmented['image']
         aug_boxes = augmented['bboxes']
         aug_categories = augmented['category']
+
+        # 过滤掉超出范围的 bbox（albumentations 可能会产生超出 0~1 的框）
+        valid_boxes = []
+        valid_categories = []
+        for bbox, category in zip(aug_boxes, aug_categories):
+            x_center, y_center, bbox_w, bbox_h = bbox
+            if 0 <= x_center <= 1 and 0 <= y_center <= 1 and 0 <= bbox_w <= 1 and 0 <= bbox_h <= 1:
+                valid_boxes.append(bbox)
+                valid_categories.append(category)
+
+        # 跳过没有有效目标的增强图片
+        if len(valid_boxes) == 0:
+            continue
 
         # 保存增强后的图片
         aug_img_filename = f"aug_{i}_{img_file}"
