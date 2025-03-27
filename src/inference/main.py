@@ -1,23 +1,24 @@
-import os
+# main.py
+
 import time
 import cv2
-from camera_out import Camera
+from camera import Camera
 from yolo_find import YOLODetector
 from video_save import VideoSaver
 
 
 def main():
-    model_path = "/home/cc/Documents/yolov8_project/src/runs/detect/train/weights/best.pt"
+    model_path = "/home/cc/yolo_v8_and_environment/src/runs/detect/train/weights/best.pt"
 
     camera = Camera(4)
     detector = YOLODetector(model_path)
-    video_saver = VideoSaver("output.avi", fps=30.0, frame_size=(640, 480))
+    video_saver = VideoSaver("output.mp4", fps=30.0, frame_size=(720, 640))
 
     # 开始时间，用于计算FPS
     start_time = time.time()
     frame_count = 0
 
-    print("开始检测并保存视频，按 'q' 退出")
+    print("开始检测并保存视频，按 'q' 或 'ESC键' 退出")
     try:
         while True:
             frame = camera.get_frame()
@@ -54,7 +55,8 @@ def main():
             # 保存到本地
             video_saver.write_frame(annotated_frame)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q') or key == 27:
                 print("检测已退出")
                 break
     except Exception as e:

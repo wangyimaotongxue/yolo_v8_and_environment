@@ -5,10 +5,10 @@ import albumentations as A
 from tqdm import tqdm
 
 # 数据路径
-IMAGE_DIR = "/home/stick/yolo_v8_and_environment/src/dataset/images/train"  # 原始图片路径
-LABEL_DIR = "/home/stick/yolo_v8_and_environment/src/dataset/labels/train"  # YOLO 标签路径
-OUTPUT_IMAGE_DIR = "/home/stick/yolo_v8_and_environment/src/dataset/images/en_train"  # 增强后的图片路径
-OUTPUT_LABEL_DIR = "/home/stick/yolo_v8_and_environment/src/dataset/labels/en_train"  # 增强后的标签路径
+IMAGE_DIR = "/home/cc/yolo_v8_and_environment/src/dataset/images/train"  # 原始图片路径
+LABEL_DIR = "/home/cc/yolo_v8_and_environment/src/dataset/labels/train"  # YOLO 标签路径
+OUTPUT_IMAGE_DIR = "/home/cc/yolo_v8_and_environment/src/dataset/images/en_train"  # 增强后的图片路径
+OUTPUT_LABEL_DIR = "/home/cc/yolo_v8_and_environment/src/dataset/labels/en_train"  # 增强后的标签路径
 
 # 确保输出文件夹存在
 os.makedirs(OUTPUT_IMAGE_DIR, exist_ok=True)
@@ -66,16 +66,19 @@ for img_file in tqdm(image_files, desc="Augmenting Images"):
         aug_categories = augmented['category']
 
         # 过滤掉超出范围的 bbox（albumentations 可能会产生超出 0~1 的框）
-        valid_boxes = []
-        valid_categories = []
+        unique_boxes = []
+        unique_categories = []
+        seen = set()
+
         for bbox, category in zip(aug_boxes, aug_categories):
-            x_center, y_center, bbox_w, bbox_h = bbox
-            if 0 <= x_center <= 1 and 0 <= y_center <= 1 and 0 <= bbox_w <= 1 and 0 <= bbox_h <= 1:
-                valid_boxes.append(bbox)
-                valid_categories.append(category)
+            key = (round(bbox[0], 6), round(bbox[1], 6), round(bbox[2], 6), round(bbox[3], 6), category)  # 归一化后保留6位精度
+            if key not in seen:
+                seen.add(key)
+                unique_boxes.append(bbox)
+                unique_categories.append(category)
 
         # 跳过没有有效目标的增强图片
-        if len(valid_boxes) == 0:
+        if len(unique_boxes) == 0:
             continue
 
         # 保存增强后的图片

@@ -1,12 +1,12 @@
 task: detect
 mode: train
 model: yolov8n.pt
-data: /home/stick/yolo_v8_and_environment/src/data.yaml
-epochs: 1000
+data: /home/cc/yolo_v8_and_environment/src/data.yaml
+epochs: 300
 time: null
 patience: 100
-batch: 32
-imgsz: 720
+batch: 16
+imgsz: 640
 save: true
 save_period: -1
 cache: false

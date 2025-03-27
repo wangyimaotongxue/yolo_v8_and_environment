@@ -48,7 +48,7 @@ export LD_LIBRARY_PATH=$LD_LIBARY_PATH:/usr/local/cuda-11.8/extras/CUPTI/lib64
     # libopenblas-dev
     ```
 
-### 在Anconda3中安装yolo_v8 和 pytorch12.
+### 在Anconda3中安装yolo_v8 和 pytorch 2.6.0
 * 创建conda虚拟环境
 ```bash
 # 启动conda

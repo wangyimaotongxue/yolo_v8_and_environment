@@ -5,8 +5,8 @@ model = YOLO("yolov8n.pt")  # 这里使用 YOLOv8 最小模型 yolov8n
 
 # 训练模型
 model.train(
-    data="/home/stick/yolo_v8_and_environment/src/data.yaml",  # 你的数据集配置文件
-    epochs=1000,         # 训练轮数
+    data="/home/cc/yolo_v8_and_environment/src/data.yaml",  # 你的数据集配置文件
+    epochs=100,         # 训练轮数
     batch=32,          # 批次大小
     imgsz=720,         # 训练图片尺寸
     device="0"      # 使用 GPU 训练，如无 GPU，可改为 "cpu"
