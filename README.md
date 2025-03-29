@@ -4,6 +4,46 @@
 
 ` git clone https://github.com/wangyimaotongxue/yolo_v8_and_environment.git `
 
+
+### 文件目录
+```bash
+.
+└── src
+    ├── dataset
+    │   ├── images
+    │   │   ├── en_train
+    │   │   ├── en_val
+    │   │   ├── train
+    │   │   └── val
+    │   └── labels
+    │       ├── en_train
+    │       ├── en_val
+    │       ├── train
+    │       └── val
+    ├── inference
+    │   └── __pycache__
+    ├── runs
+    │   └── detect
+    │       └── train
+    │           └── weights
+    └── train
+        ├── __pycache__
+        └── runs
+            └── detect
+                ├── train
+                ├── train2
+                ├── train3
+                ├── train4
+                ├── train5
+                └── train6
+                    └── weights
+
+29 directories
+
+```
+*因为github存储空间问题，上传文件时，删除掉了所有图片和标签，请根据列表进行还原*
+
+
 ### 环境CUDA配置
 
 * 安装nvidia显卡驱动550以上的版本
